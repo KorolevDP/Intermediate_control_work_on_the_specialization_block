@@ -1,57 +1,70 @@
-сlass CollectionNotes:
-
-import json
-import uuid
 from datetime import datetime
+import uuid
+import json
 
-    def __init__(self, id, title, body, date, path: str = 'Notes.json'):
-        self._notes: list[dict[str,str]] = []
-        self.id = id
-        self.title = title
-        self body = body
-        self.date = date
-        self.path = path    
+class CollectionNotes:
 
-    def open_notes(self):      
-        with open(self._path, 'r', encoding='UTF-8') as file:
-            data = json.load(file)
-        for note in data:            
-            new = {'id': note[0], 'name': note[1], 'phone': note[2], 'comment': note[3]}
-            self._notes.append(new)
+    # Конструктор класса заметок
+    def __init__(self, path: str = 'Notes.json'):
+        self._notes: list[dict[int, str, str, datetime]] = []
+        self._path = path
+        self._id = id
+        self._date = datetime
+        
+    # Считывание файла с заметками в переменную
+    def open_notes(self):       
+           with open(self._path, 'r', encoding='UTF-8') as file:
+               self._notes = json.load(file)
+               return self._notes
 
+    # Сохранение данных из переменной в json-файл
     def save_notes(self):
-        with open(self._path, 'w', encoding='UTF-8') as file:
-            json.dump(data, file, indent=4, separators=(',', ': '))
+         self.notes = json.dumps(self._notes)
+         self.notes = json.loads(str(self.notes))        
+         with open(self._path, 'w', encoding='utf-8') as file:
+            json.dump(self.notes, file, indent=4, ensure_ascii=False)
 
     def load(self):
         return self._notes
 
-    def add(self, new: dict[str, str]) -> str:
-        self.date = datetime.now().strftime('%d.%m.%Y %H:%M:%S')
-        self.id = str(uuid.uuid4())
-        self.notes.append(new)
-        return new.get('name')
-
-    def search(self, word: str) -> list[dict[str, str]]:
-        result: list[dict[str, str]] = []
+    # Добавление новой заметки
+    def add(self, new: dict[int, str, str, datetime]) -> str:
+        new['id'] = uuid.uuid1().int
+        new['date'] = datetime.now().strftime('%d.%m.%Y %H:%M:%S')  
+        self._notes.append(new)
+        return new.get('title') 
+    
+    # Поиск заметки по ID
+    def search(self, id_) -> list[dict[int, str, str, datetime]]:
+        result: list[dict[int, str, str, datetime]] = []
         for note in self._notes:
-            for field in note.values():
-                if word.lower() in field.lower():
-                    result.append(note)
-                    break
+            if id_ == note['id']:
+                result.append(note) 
+                break
         return result
 
+    # Выборка заметок по дате
+    def selection_by_date(self, date_) -> list[dict[int, str, str, datetime]]:
+        result: list[dict[int, str, str, datetime]] = []
+        for note in self._notes:
+            if date_ in note['date']:
+                result.append(note)                 
+        return result
+     
+    # Изменение заметки
     def change_note(self, new: dict, index: int) -> str:
         for note in self._notes:
             if index == note.get('id'):
-                note['name'] = new.get('name', note.get('name'))
-                note['date'] = new.get('date', note.get('date'))
+                note['title'] = new.get('title', note.get('title'))                
                 note['body'] = new.get('body', note.get('body'))
-                return note.get('name')
+                note['date'] = datetime.now().strftime('%d.%m.%Y %H:%M:%S')
+                return note.get('title')
 
-    def delete_note(self, index: int) -> list[dict[str, str]]:
+    # Удаление заметки
+    def delete_note(self, index: int) -> list[dict[int, str, str, datetime]]:
         for note in self._notes:
             if index == note.get('id'):
-                notes.remove(note)
+                self._notes.remove(note)
                 break
-        return note.get('name')
+        return note.get('title')
+ 

@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>1421c1d2-8bc9-4fbb-9f29-c48738b4337d</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Notes_app.py</StartupFile>
+    <StartupFile>main.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -23,7 +23,7 @@
   <ItemGroup>
     <Compile Include="controller.py" />
     <Compile Include="model.py" />
-    <Compile Include="Notes_app.py" />
+    <Compile Include="main.py" />
     <Compile Include="text.py" />
     <Compile Include="view.py" />
   </ItemGroup>
