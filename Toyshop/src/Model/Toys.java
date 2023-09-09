@@ -2,22 +2,22 @@ package Model;
 
 public  class Toys  implements Comparable<Toys>{
 
-    private int toyID;
+    private int toyId;
     private String toyName;
-    private int toyDropFrequency;
+    private double toyDropFrequency;
 
-    public Toys(int toyID, String toyName, int toyDropFrequency) {
-        this.toyID = toyID;
+    public Toys(int toyId, String toyName, double toyDropFrequency) {
+        this.toyId = toyId;
         this.toyName = toyName;
         this.toyDropFrequency = toyDropFrequency;
     }
 
-    public int getToyID() {
-        return toyID;
+    public int getToyId() {
+        return toyId;
     }
 
-    public void setToyID(int toyID) {
-        this.toyID = toyID;
+    public void setToyId(int toyId) {
+        this.toyId = toyId;
     }
 
 
@@ -29,17 +29,17 @@ public  class Toys  implements Comparable<Toys>{
         this.toyName = toyName;
     }
 
-    public int getToyDropFrequency() {
+    public double getToyDropFrequency() {
         return toyDropFrequency;
     }
 
-    public void setToyDropFrequency(int toyDropFrequency) {
+    public void setToyDropFrequency(double toyDropFrequency) {
         this.toyDropFrequency = toyDropFrequency;
     }
 
     @Override
     public String toString() {
-        return "Toy [id = " + toyID + ", name= " + toyName + ", DropFrequency = " + toyDropFrequency + "]";
+        return "Toy [id = " + toyId + ", name= " + toyName + ", DropFrequency = " + toyDropFrequency + "]";
     }
 
     @Override

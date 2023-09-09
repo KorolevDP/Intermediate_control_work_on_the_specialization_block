@@ -3,11 +3,12 @@ package View;
 import java.util.PriorityQueue;
 import java.util.Scanner;
 
+import Controller.iGetView;
 import Model.Toys;
 
-public class View {
+public class View implements iGetView {
 
-    public static void printPriorityQueueToys(PriorityQueue<Toys> toys){
+    public void printAllToys(PriorityQueue<Toys> toys){
         System.out.println("=====================Очередь_игрушек======================");
         for (Toys toy: toys)
         {
@@ -16,12 +17,7 @@ public class View {
         System.out.println("==========================================================");
     }
 
-    public static void printPrizeToy(PriorityQueue<Toys> toys){
-        System.out.println(toys.peek());
-    }
-
-
-    public static String promt(String message) {
+    public  String promt(String message) {
         Scanner in = new Scanner(System.in);
         System.out.print(message);
         return in.nextLine();

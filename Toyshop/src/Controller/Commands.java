@@ -2,8 +2,11 @@ package Controller;
 
 public enum Commands {
     NONE,
-    CREATE,
-    READ,
     ADD,
+    EDIT,
+    GETTOY,
+    SEARCH,
+    PRINT,
+    DELETE,
     EXIT
 }
