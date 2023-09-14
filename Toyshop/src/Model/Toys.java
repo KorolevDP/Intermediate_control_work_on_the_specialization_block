@@ -1,5 +1,9 @@
 package Model;
 
+
+/**
+ * Класс игрушек с заданными полями
+ */
 public  class Toys  implements Comparable<Toys>{
 
     private int toyId;
@@ -39,7 +43,7 @@ public  class Toys  implements Comparable<Toys>{
 
     @Override
     public String toString() {
-        return "Toy [id = " + toyId + ", name= " + toyName + ", DropFrequency = " + toyDropFrequency + "]";
+        return "[id = " + toyId + ", name= " + toyName + ", DropFrequency = " + toyDropFrequency + "]";
     }
 
     @Override

@@ -3,98 +3,150 @@ package Controller;
 import Model.Toys;
 import View.Text;
 
+import java.io.FileWriter;
 import java.util.PriorityQueue;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 
 public class Controller {
 
     private iGetModel model;
     private iGetView view;
-    private FileActions fa;
-
     private Text txt;
 
-    private PriorityQueue<Toys> prQueueToys = new PriorityQueue<>();
+    private List<Toys> listToys = new ArrayList<>();
+    PriorityQueue<Toys> toysPriorityQueue = new PriorityQueue<>();
 
     public Controller(iGetModel model, iGetView view) {
         this.model = model;
         this.view = view;
-
-        fa = new FileActions("Result.txt");
     }
 
-/*    public static PriorityQueue<Toys> addToyToQueue(Toys toy, PriorityQueue<Toys> prQueueToys){
-        prQueueToys.add(toy);
-        return prQueueToys;
-    }*/
-
-    private Toys delFirstElemQueue() {
-        Toys elem = prQueueToys.poll();
-        if (prQueueToys.size() > 0) {
-            System.out.println(txt.startWith + "id= " + elem.getToyId() + " name=" + elem.getToyName());
-        } else {
-            System.out.println(txt.empty);
-        }
-        return elem;
-    }
-
-    private boolean testEmpty(PriorityQueue<Toys> toys) {
-        if (toys.size() > 0) {
+    /**
+     * Добавление списка игрушек в приоритетную очередь
+     */
+    private boolean addListToQueue() {
+        toysPriorityQueue.clear();
+        toysPriorityQueue.addAll(model.getAllToys());
+        if (toysPriorityQueue.size() > 0) {
             return true;
         } else {
             return false;
         }
     }
 
+    /**
+     * Метод розыгрыша игрушки случайным образом.
+     * @return выбранная игрушка
+     */
+    public Toys drawToy() {
+
+        // проверяем наличие игрушек в магазине
+        if (toysPriorityQueue.isEmpty()) {
+            view.printMsg(txt.noToysInShop);
+        }
+
+        double totalWeight = 0;
+
+        //считаем сумму весов всех игрушек
+        for (Toys toy : toysPriorityQueue) {
+            totalWeight += toy.getToyDropFrequency();
+        }
+
+        // генерируем случайное число от 0 до общей суммы весов
+        Random rnd = new Random();
+        double randomNumber = rnd.nextDouble() * totalWeight;
+
+        // находим грушку в соответствии сгенерированного числа
+        double currentWeight = 0;
+        Toys chosenToy = null;
+
+        for (Toys toy : toysPriorityQueue) {
+            currentWeight += toy.getToyDropFrequency();
+
+            if (randomNumber <= currentWeight) {
+                chosenToy = toy;
+                break;
+            }
+        }
+
+        // выводим результат розыгрыша
+        if (chosenToy != null) {
+            System.out.println(txt.startWith + "id = " + chosenToy.getToyId() + "; name = " + chosenToy.getToyName() + "; weight = " + chosenToy.getToyDropFrequency());
+        } else {
+            view.printMsg(txt.empty);
+        }
+        return chosenToy;
+    }
+
+    private boolean testEmpty(List<Toys> listToys) {
+        if (listToys.size() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Добавление игрушки в список
+     *
+     * @param id
+     * @param toyname
+     * @param toyWeight
+     */
     public void addToy(int id, String toyname, double toyWeight) {
         if (!toyname.isEmpty() && toyWeight > 0) {
             Toys newtoy = new Toys(id, toyname, toyWeight);
             model.addNewToy(newtoy);
         } else {
-            System.out.println(txt.error);
+            view.printMsg(txt.error);
         }
     }
 
-    public void editWeightToy(int id) {
-        PriorityQueue<Toys> result = new PriorityQueue<>();
-        result = searchToyById(id, model);
-        if (result.size() > 0) {
-            for (Toys toy : result) {
-                System.out.println("id=" + toy.getToyId() + "name=" + toy.getToyName());
-                double toyWeight = Double.parseDouble(view.promt(txt.enterWeight));
+    /**
+     * Метод изменения веса игрушки
+     * @param id
+     * @param weight
+     */
+    public void setToyWeight(int id, double weight) {
+        for (Toys toy : listToys) {
+            if (toy.getToyId() == id) {
+                toy.setToyDropFrequency(weight);
+                view.printOneToy(toy);
+                break;
             }
-        } else {
-            System.out.println("================================");
-            System.out.println(txt.error);
-            System.out.println("================================");
         }
     }
 
-    public void deleteToy(int id, iGetModel model) {
-        PriorityQueue<Toys> result = model.getFoundToyById(id);
-        if (result.size() > 0) {
-            for (Toys item : result) {
-                model.deleteSelToy(item);
-            }
-        } else {
-            System.out.println("================================");
-            System.out.println(txt.emptySearch);
-            System.out.println("================================");
+    /**
+     * Сохранение выбранной игрушки в файл
+     * @param fileName
+     * @param toy
+     */
+    public void saveToyToFile(String fileName, Toys toy) {
+        try (FileWriter fw = new FileWriter(fileName, true)) {
+            fw.write("Название: " + toy.getToyName() + "; вес: " + toy.getToyDropFrequency() + "; id: " + toy.getToyId());
+            fw.append('\n');
+            fw.flush();
+        } catch (Exception e) {
+            view.printMsg(e.getMessage());
         }
     }
 
-    public void update(PriorityQueue<Toys> toys) {
-        if (testEmpty(toys)) {
-            view.printAllToys(toys);
+    public void update() {
+        listToys = model.getAllToys();
+        if (testEmpty(listToys)) {
+            view.printAllToys(listToys);
         } else {
-            System.out.println(txt.noToysInShop);
+            view.printMsg(txt.noToysInShop);
         }
     }
 
-    public PriorityQueue<Toys> searchToyById(int id, iGetModel model) {
-        return model.getFoundToyById(id);
-    }
-
+    /**
+     * Метод запуска программы с выбором функций
+     */
     public void run() {
         Commands com = Commands.NONE;
         boolean getNewIteration = true;
@@ -116,46 +168,39 @@ public class Controller {
                     }
                     break;
 
-                case EDIT:
-                    try {
-                        int id = Integer.parseInt(view.promt(txt.enterId));
-                        editWeightToy(id);
-
-                    } catch (Exception e) {
-                        System.out.println(e.getClass().getCanonicalName());
-                    }
+                case SETWEIGHT:
+                    update();
+                    Integer id = Integer.parseInt(view.promt(txt.enterId));
+                    double toyweight = Double.parseDouble(view.promt(txt.enterWeight));
+                    setToyWeight(id, toyweight);
                     break;
 
                 case PRINT:
-                    view.printAllToys(prQueueToys);
-
-                case DELETE:
-                    try {
-                        int id = Integer.parseInt(view.promt(txt.idForDell));
-                        deleteToy(id, model);
-                        view.printAllToys(prQueueToys);
-                    } catch (Exception e) {
-                        System.out.println(e.getClass().getCanonicalName());
-                    }
+                    update();
                     break;
 
-                case SEARCH:
-                    int id = Integer.parseInt(view.promt(txt.enterId));
-                    searchToyById(id, model);
+                case PRINTQ:
+                    view.printQueueToys(toysPriorityQueue);
                     break;
 
-                case GETTOY:
-                    Toys toy = delFirstElemQueue();
-                    fa.saveToyToFile(toy);
+                case ADDTOQUEUE:
+                    addListToQueue();
+                    view.printQueueToys(toysPriorityQueue);
+                    break;
+
+                case GETTOYFROMQUEUE:
+                    Toys getToy = drawToy();
+                    saveToyToFile("Result.txt", getToy);
+                    break;
 
                 case EXIT:                                                               // выход
                     getNewIteration = false;
-                    System.out.println(txt.exitFromProgramm);
+                    view.printMsg(txt.exitFromProgramm);
                     break;
 
                 default:
                     getNewIteration = false;
-                    System.out.println(txt.exitFromProgramm);
+                    view.printMsg(txt.exitFromProgramm);
                     break;
             }
         }

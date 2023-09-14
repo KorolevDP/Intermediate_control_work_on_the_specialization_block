@@ -3,10 +3,10 @@ package Controller;
 public enum Commands {
     NONE,
     ADD,
-    EDIT,
-    GETTOY,
-    SEARCH,
+    SETWEIGHT,
+    ADDTOQUEUE,
+    GETTOYFROMQUEUE,
     PRINT,
-    DELETE,
+    PRINTQ,
     EXIT
 }

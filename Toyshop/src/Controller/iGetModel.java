@@ -1,16 +1,12 @@
 package Controller;
 
 import Model.Toys;
-
-import java.util.PriorityQueue;
+import java.util.List;
 
 public interface iGetModel {
 
-    public PriorityQueue<Toys> getAllToys();
-
-    public void deleteSelToy(Toys std);
-
-    public PriorityQueue<Toys> getFoundToyById(int id);
+    public List<Toys> getAllToys();
 
     void addNewToy(Toys newToy);
+
 }
